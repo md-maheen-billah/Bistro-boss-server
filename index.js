@@ -138,6 +138,13 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/menu/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await menuCollection.findOne(query);
+      res.send(result);
+    });
+
     app.get("/reviews", async (req, res) => {
       const result = await reviewsCollection.find().toArray();
       res.send(result);
@@ -153,6 +160,19 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await menuCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    app.patch("/menu/:id", verifyToken, verifyAdmin, async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const item = req.body;
+      const updatedDoc = {
+        $set: {
+          ...item,
+        },
+      };
+      const result = await menuCollection.updateOne(filter, updatedDoc);
       res.send(result);
     });
 
